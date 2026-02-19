@@ -1,14 +1,19 @@
 import { AnimatedSection } from "@/components/shared/animated-section"
 import { MarkdownRenderer } from "@/components/shared/markdown-renderer"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { getBlogPostBySlug, getBlogPosts, incrementPostViews } from "@/lib/data"
 import { formatDate } from "@/lib/format"
-import { ArrowLeft, Calendar, Eye } from "lucide-react"
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import {
+  HiOutlineArrowLeft,
+  HiOutlineCalendarDays,
+  HiOutlineEye,
+} from "react-icons/hi2"
 
 export const revalidate = 60
 
@@ -84,13 +89,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <article className="px-6 pb-24 pt-24">
       <div className="mx-auto max-w-3xl">
         <AnimatedSection>
-          <Link
-            href="/blog"
-            className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          <Button
+            variant="link"
+            size="sm"
+            asChild
+            className="mb-8 p-0 text-muted-foreground"
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back to blog
-          </Link>
+            <Link href="/blog">
+              <HiOutlineArrowLeft className="size-3.5" />
+              Back to blog
+            </Link>
+          </Button>
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
@@ -98,12 +107,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               {post.published_at && (
                 <span className="inline-flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" />
+                  <HiOutlineCalendarDays className="size-3.5" />
                   {formatDate(post.published_at)}
                 </span>
               )}
               <span className="inline-flex items-center gap-1">
-                <Eye className="h-3.5 w-3.5" />
+                <HiOutlineEye className="size-3.5" />
                 {post.views} views
               </span>
             </div>
