@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import type {
   BlogPost,
+  Certification,
   Experience,
   ExperienceType,
   Profile,
@@ -18,7 +19,7 @@ export async function getSkills(): Promise<Skill[]> {
   const supabase = await createSupabaseServerClient()
   const { data } = await supabase
     .from("skills")
-    .select("*")
+    .select("*, category:skill_categories(*)")
     .order("sort_order", { ascending: true })
   return data ?? []
 }
@@ -92,7 +93,7 @@ export async function getExperiences(
   const supabase = await createSupabaseServerClient()
   let query = supabase
     .from("experiences")
-    .select("*")
+    .select("*, experience_skills(*, skill:skills(*))")
     .order("start_date", { ascending: false })
 
   if (options.type) {
@@ -104,5 +105,14 @@ export async function getExperiences(
   }
 
   const { data } = await query
+  return data ?? []
+}
+
+export async function getCertifications(): Promise<Certification[]> {
+  const supabase = await createSupabaseServerClient()
+  const { data } = await supabase
+    .from("certifications")
+    .select("*")
+    .order("sort_order", { ascending: true })
   return data ?? []
 }
