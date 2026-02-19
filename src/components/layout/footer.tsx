@@ -1,3 +1,5 @@
+import RnldvrglTag from "@/components/shared/rnldvrgl-tag"
+
 export function Footer() {
   return (
     <footer className="border-t border-border/40 py-8">
@@ -6,11 +8,7 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} Ronald Vergel Dela Cruz
           </p>
-          <p className="text-sm text-code-comment">
-            <span className="text-code-tag">&lt;</span>
-            <span className="text-code-keyword">rnldvrgl</span>
-            <span className="text-code-tag"> /&gt;</span>
-          </p>
+          <RnldvrglTag />
         </div>
       </div>
     </footer>

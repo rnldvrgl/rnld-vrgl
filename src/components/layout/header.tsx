@@ -1,8 +1,9 @@
 "use client"
 
+import RnldvrglTag from "@/components/shared/rnldvrgl-tag"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
+import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { Menu, X } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
@@ -16,7 +17,7 @@ const navLinks = [
   { href: "#contact", label: "contact", index: "06" },
 ]
 
-const blogLink = { href: "/blog", label: "blog", index: "07" }
+const blogPageLink = { href: "/blog", label: "blog", index: "07" }
 
 export function Header() {
   const pathname = usePathname()
@@ -25,6 +26,18 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false)
 
   const isHome = pathname === "/"
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "unset"
+    }
+    return () => {
+      document.body.style.overflow = "unset"
+    }
+  }, [mobileOpen])
 
   // Track scroll position for active section and header blur
   useEffect(() => {
@@ -74,7 +87,7 @@ export function Header() {
         <span className="font-mono text-xs text-muted-foreground/50">
           {link.index}
         </span>
-        <span className="text-xs text-muted-foreground/40">//</span>
+        <span className="text-xs text-muted-foreground/40">{"//"}</span>
         <span
           className={`text-2xl font-light tracking-wide ${
             isActive
@@ -91,7 +104,7 @@ export function Header() {
           {link.index}
         </span>
         <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60 transition-colors group-hover:text-muted-foreground">
-          //
+          {"//"}
         </span>
         <span
           className={`text-[13px] font-medium tracking-wide transition-colors ${
@@ -117,10 +130,13 @@ export function Header() {
     )
 
     if (isAnchor) {
+      // On non-home pages, link to /<hash> so it navigates home first
+      const resolvedHref = isHome ? link.href : `/${link.href}`
+
       return (
         <a
           key={link.href}
-          href={link.href}
+          href={resolvedHref}
           onClick={() => handleNavClick(link.href)}
           className={`group ${isMobile ? "flex items-baseline gap-3 py-3" : "relative flex items-baseline gap-2 py-2"}`}
         >
@@ -141,7 +157,7 @@ export function Header() {
     )
   }
 
-  const allLinks = [...navLinks, blogLink]
+  const allLinks = [...navLinks, blogPageLink]
 
   return (
     <header
@@ -155,38 +171,60 @@ export function Header() {
         {/* Logo */}
         <a
           href={isHome ? "#hero" : "/"}
+          title="Ronald Vergel Dela Cruz"
           className="relative z-50 text-sm font-medium tracking-tight text-foreground transition-opacity hover:opacity-70"
         >
-          <span className="text-code-tag">&lt;</span>
-          <span className="text-code-keyword">rnldvrgl</span>
-          <span className="text-code-tag"> /&gt;</span>
+          <RnldvrglTag />
         </a>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-8 md:flex">
-          {isHome
-            ? navLinks.map((link) =>
-                renderNavItem(link, activeSection === link.href),
-              )
-            : null}
-          {renderNavItem(blogLink, pathname.startsWith("/blog"))}
+          {navLinks.map((link) =>
+            renderNavItem(link, isHome ? activeSection === link.href : false),
+          )}
           <ThemeToggle />
         </nav>
 
         {/* Mobile toggle */}
         <div className="flex items-center gap-3 md:hidden">
           <ThemeToggle />
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="relative z-50 p-2 text-foreground"
+            className="relative z-50"
             aria-label="Toggle menu"
           >
-            {mobileOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
+            <div className="relative size-5">
+              {/* Top bar */}
+              <motion.span
+                className="absolute left-0 h-0.5 w-5 bg-current"
+                animate={{
+                  rotate: mobileOpen ? 45 : 0,
+                  y: mobileOpen ? 9 : 3,
+                }}
+                transition={{ duration: 0.2 }}
+              />
+              {/* Middle bar */}
+              <motion.span
+                className="absolute left-0 top-1/2 h-0.5 w-5 -translate-y-1/2 bg-current"
+                animate={{
+                  opacity: mobileOpen ? 0 : 1,
+                  x: mobileOpen ? -10 : 0,
+                }}
+                transition={{ duration: 0.2 }}
+              />
+              {/* Bottom bar */}
+              <motion.span
+                className="absolute left-0 h-0.5 w-5 bg-current"
+                animate={{
+                  rotate: mobileOpen ? -45 : 0,
+                  y: mobileOpen ? 9 : 15,
+                }}
+                transition={{ duration: 0.2 }}
+              />
+            </div>
+          </Button>
         </div>
       </div>
 
