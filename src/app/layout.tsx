@@ -1,6 +1,8 @@
 import { Footer } from "@/components/layout/footer"
 import { Header } from "@/components/layout/header"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { CustomCursor } from "@/components/shared/custom-cursor"
+import { ScrollToTop } from "@/components/shared/scroll-to-top"
 import type { Metadata } from "next"
 import { JetBrains_Mono } from "next/font/google"
 import "./globals.css"
@@ -58,9 +60,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="relative flex min-h-screen flex-col">
+            {/* Subtle grid background */}
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-size-[4rem_4rem] opacity-30" />
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
+            <ScrollToTop />
+            <CustomCursor />
           </div>
         </ThemeProvider>
       </body>
