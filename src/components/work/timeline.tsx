@@ -4,15 +4,20 @@ import { Badge } from "@/components/ui/badge"
 import { formatTimelineDate } from "@/lib/format"
 import type { Experience } from "@/lib/supabase/types"
 import { motion } from "framer-motion"
-import { ArrowUpRight, Briefcase, Code2, Laptop } from "lucide-react"
+import {
+  HiOutlineArrowUpRight,
+  HiOutlineBriefcase,
+  HiOutlineCodeBracket,
+  HiOutlineComputerDesktop,
+} from "react-icons/hi2"
 
 const typeConfig: Record<
   Experience["type"],
-  { label: string; icon: typeof Briefcase }
+  { label: string; icon: typeof HiOutlineBriefcase }
 > = {
-  work: { label: "Employment", icon: Briefcase },
-  project: { label: "Project", icon: Code2 },
-  freelance: { label: "Freelance", icon: Laptop },
+  work: { label: "Employment", icon: HiOutlineBriefcase },
+  project: { label: "Project", icon: HiOutlineCodeBracket },
+  freelance: { label: "Freelance", icon: HiOutlineComputerDesktop },
 }
 
 function TimelineItem({
@@ -34,15 +39,15 @@ function TimelineItem({
         <motion.div
           initial={{ scale: 0 }}
           whileInView={{ scale: 1 }}
-          viewport={{ once: true, margin: "-40px" }}
+          viewport={{ once: false, margin: "-40px" }}
           transition={{
             duration: 0.4,
             delay: 0.1,
             ease: [0.21, 0.47, 0.32, 0.98],
           }}
-          className="sticky top-40 flex h-3 w-3 items-center justify-center"
+          className="sticky top-40 flex size-3 items-center justify-center"
         >
-          <div className="h-2.5 w-2.5 rounded-full border border-muted-foreground/30 bg-background transition-colors group-hover:border-foreground/60 group-hover:bg-foreground/10" />
+          <div className="size-2.5 rounded-full border border-foreground/30 bg-foreground/50 transition-colors group-hover:border-foreground/60 group-hover:bg-foreground" />
         </motion.div>
       </div>
 
@@ -58,7 +63,7 @@ function TimelineItem({
             x: isLeft ? -30 : 30,
           }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
+          viewport={{ once: false, margin: "-60px" }}
           transition={{
             duration: 0.6,
             ease: [0.21, 0.47, 0.32, 0.98],
@@ -68,7 +73,7 @@ function TimelineItem({
           {/* Type badge + date */}
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <Icon className="h-3.5 w-3.5 text-muted-foreground/60" />
+              <Icon className="size-3.5 text-muted-foreground/60" />
               <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground/60">
                 {config.label}
               </span>
@@ -98,19 +103,20 @@ function TimelineItem({
           </p>
 
           {/* Tech stack */}
-          {experience.tech_stack.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {experience.tech_stack.map((tech) => (
-                <Badge
-                  key={tech}
-                  variant="secondary"
-                  className="border-border/30 bg-secondary/30 text-[10px] font-normal text-muted-foreground/70 hover:bg-secondary/50 hover:text-muted-foreground"
-                >
-                  {tech}
-                </Badge>
-              ))}
-            </div>
-          )}
+          {experience.experience_skills &&
+            experience.experience_skills.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {experience.experience_skills.map((es) => (
+                  <Badge
+                    key={es.id}
+                    variant="secondary"
+                    className="border-border/30 bg-secondary/30 text-[10px] font-normal text-muted-foreground/70 hover:bg-secondary/50 hover:text-muted-foreground"
+                  >
+                    {es.skill?.name ?? "Unknown"}
+                  </Badge>
+                ))}
+              </div>
+            )}
 
           {/* Link */}
           {experience.link && (
@@ -121,7 +127,7 @@ function TimelineItem({
               className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
             >
               View
-              <ArrowUpRight className="h-3 w-3" />
+              <HiOutlineArrowUpRight className="size-3" />
             </a>
           )}
         </motion.div>
@@ -146,7 +152,7 @@ function TimelineItem({
 function MobileDot() {
   return (
     <div className="relative mb-1 flex items-center gap-4 md:hidden">
-      <div className="ml-[22px] h-2.5 w-2.5 rounded-full border border-muted-foreground/30 bg-background" />
+      <div className="ml-5.5 size-2.5 rounded-full border border-foreground/30 bg-foreground/50 " />
     </div>
   )
 }
@@ -164,13 +170,13 @@ export function Timeline({ experiences }: { experiences: Experience[] }) {
     <div className="relative">
       {/* Center vertical line — desktop */}
       <div
-        className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-border/0 via-border/60 to-border/0 md:block"
+        className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-foreground to-border/0 md:block"
         aria-hidden
       />
 
       {/* Left vertical line — mobile */}
       <div
-        className="absolute left-[27px] top-0 h-full w-px bg-gradient-to-b from-border/0 via-border/60 to-border/0 md:hidden"
+        className="absolute left-6.75 top-0 h-full w-px bg-foreground to-border/0 md:hidden"
         aria-hidden
       />
 

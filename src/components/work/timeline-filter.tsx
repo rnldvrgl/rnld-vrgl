@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import type { ExperienceType } from "@/lib/supabase/types"
 import { motion } from "framer-motion"
 
@@ -19,10 +20,12 @@ export function TimelineFilter({ active, onChange }: TimelineFilterProps) {
   return (
     <div className="flex flex-wrap gap-2">
       {filters.map((filter) => (
-        <button
+        <Button
           key={filter.value}
+          variant="ghost"
+          size="sm"
           onClick={() => onChange(filter.value)}
-          className={`relative rounded-full px-4 py-1.5 text-xs font-medium tracking-wide transition-colors ${
+          className={`relative rounded-full px-4 py-1.5 text-xs font-medium tracking-wide ${
             active === filter.value
               ? "text-foreground"
               : "text-muted-foreground/60 hover:text-muted-foreground"
@@ -40,7 +43,7 @@ export function TimelineFilter({ active, onChange }: TimelineFilterProps) {
             />
           )}
           <span className="relative z-10">{filter.label}</span>
-        </button>
+        </Button>
       ))}
     </div>
   )

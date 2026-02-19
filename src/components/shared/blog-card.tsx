@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/format"
 import type { BlogPost } from "@/lib/supabase/types"
-import { Calendar, Eye } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { HiOutlineCalendarDays, HiOutlineEye } from "react-icons/hi2"
 
 export function BlogCard({ post }: { post: BlogPost }) {
   const tags =
@@ -32,12 +32,12 @@ export function BlogCard({ post }: { post: BlogPost }) {
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             {post.published_at && (
               <span className="inline-flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
+                <HiOutlineCalendarDays className="size-3" />
                 {formatDate(post.published_at)}
               </span>
             )}
             <span className="inline-flex items-center gap-1">
-              <Eye className="h-3 w-3" />
+              <HiOutlineEye className="size-3" />
               {post.views} views
             </span>
           </div>
