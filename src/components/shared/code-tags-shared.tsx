@@ -92,6 +92,21 @@ export function CodeComment({ children, className = "" }: CodeTagProps) {
   )
 }
 
+/** Renders a DOCTYPE declaration like `<!DOCTYPE html>` */
+export function DocType({ className = "" }: { className?: string }) {
+  return (
+    <span
+      className={`select-none text-sm tracking-wide text-code-comment ${className}`}
+      aria-hidden
+    >
+      <span className="text-code-tag">&lt;!</span>
+      <span className="text-code-keyword">DOCTYPE</span>
+      <span className="text-code-attr"> html</span>
+      <span className="text-code-tag">&gt;</span>
+    </span>
+  )
+}
+
 /** A lighter inline code-block heading - used inside sections */
 export function CodeHeading({
   tag,
