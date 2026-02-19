@@ -15,11 +15,20 @@ export interface Profile {
   updated_at: string
 }
 
+export interface SkillCategory {
+  id: string
+  name: string
+  slug: string
+  sort_order: number
+  created_at: string
+}
+
 export interface Skill {
   id: string
   name: string
-  category: string
-  icon_url: string | null
+  category_id: string | null
+  category?: SkillCategory
+  icon_name: string | null
   proficiency: number
   sort_order: number
   created_at: string
@@ -79,12 +88,18 @@ export interface BlogTag {
 
 export type ExperienceType = "work" | "project" | "freelance"
 
+export interface ExperienceSkill {
+  id: string
+  experience_id: string
+  skill_id: string
+  skill?: Skill
+}
+
 export interface Experience {
   id: string
   title: string
   company: string
   description: string
-  tech_stack: string[]
   start_date: string
   end_date: string | null
   type: ExperienceType
@@ -93,4 +108,17 @@ export interface Experience {
   sort_order: number
   created_at: string
   updated_at: string
+  experience_skills?: ExperienceSkill[]
+}
+
+export interface Certification {
+  id: string
+  name: string
+  issuer: string
+  issue_date: string
+  expiry_date: string | null
+  credential_id: string | null
+  credential_url: string | null
+  sort_order: number
+  created_at: string
 }
