@@ -4,10 +4,13 @@ export function Footer() {
       <div className="mx-auto max-w-5xl px-6">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Ronald Vergel Dela Cruz. All
-            rights reserved.
+            &copy; {new Date().getFullYear()} Ronald Vergel Dela Cruz
           </p>
-          <p className="text-sm text-muted-foreground">&lt;rnldvrgl /&gt; </p>
+          <p className="text-sm text-code-comment">
+            <span className="text-code-tag">&lt;</span>
+            <span className="text-code-keyword">rnldvrgl</span>
+            <span className="text-code-tag"> /&gt;</span>
+          </p>
         </div>
       </div>
     </footer>

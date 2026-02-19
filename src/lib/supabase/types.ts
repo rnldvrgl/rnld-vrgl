@@ -76,3 +76,21 @@ export interface BlogTag {
   tag_id: string
   tag?: Tag
 }
+
+export type ExperienceType = "work" | "project" | "freelance"
+
+export interface Experience {
+  id: string
+  title: string
+  company: string
+  description: string
+  tech_stack: string[]
+  start_date: string
+  end_date: string | null
+  type: ExperienceType
+  link: string | null
+  featured: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}

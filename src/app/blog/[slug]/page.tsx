@@ -55,8 +55,13 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  const posts = await getBlogPosts()
-  return posts.map((post) => ({ slug: post.slug }))
+  try {
+    const posts = await getBlogPosts()
+    return posts.map((post) => ({ slug: post.slug }))
+  } catch {
+    // During build, cookies() is unavailable — return empty to skip SSG
+    return []
+  }
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -76,7 +81,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       .filter((t): t is NonNullable<typeof t> => t != null) ?? []
 
   return (
-    <article className="py-24 px-6">
+    <article className="px-6 pb-24 pt-24">
       <div className="mx-auto max-w-3xl">
         <AnimatedSection>
           <Link

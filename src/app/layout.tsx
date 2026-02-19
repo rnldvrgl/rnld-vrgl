@@ -1,17 +1,14 @@
 import { Footer } from "@/components/layout/footer"
 import { Header } from "@/components/layout/header"
+import { ThemeProvider } from "@/components/providers/theme-provider"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-})
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -51,16 +48,21 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="dark"
+      suppressHydrationWarning
     >
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
-      >
-        <div className="relative flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
+      <body className={`${jetbrainsMono.variable} font-mono antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="relative flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   )

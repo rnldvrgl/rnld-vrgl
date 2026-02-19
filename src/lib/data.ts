@@ -1,5 +1,12 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server"
-import type { BlogPost, Profile, Project, Skill } from "@/lib/supabase/types"
+import type {
+  BlogPost,
+  Experience,
+  ExperienceType,
+  Profile,
+  Project,
+  Skill,
+} from "@/lib/supabase/types"
 
 export async function getProfile(): Promise<Profile | null> {
   const supabase = await createSupabaseServerClient()
@@ -77,4 +84,25 @@ export async function getBlogPostBySlug(
 export async function incrementPostViews(postId: string): Promise<void> {
   const supabase = await createSupabaseServerClient()
   await supabase.rpc("increment_post_views", { post_id: postId })
+}
+
+export async function getExperiences(
+  options: { type?: ExperienceType; featured?: boolean } = {},
+): Promise<Experience[]> {
+  const supabase = await createSupabaseServerClient()
+  let query = supabase
+    .from("experiences")
+    .select("*")
+    .order("start_date", { ascending: false })
+
+  if (options.type) {
+    query = query.eq("type", options.type)
+  }
+
+  if (options.featured) {
+    query = query.eq("featured", true)
+  }
+
+  const { data } = await query
+  return data ?? []
 }

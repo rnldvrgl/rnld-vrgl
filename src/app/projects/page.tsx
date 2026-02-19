@@ -16,7 +16,7 @@ export default async function ProjectsPage() {
   const projects = await getProjects()
 
   return (
-    <section className="py-24 px-6">
+    <section className="px-6 pb-24 pt-32">
       <div className="mx-auto max-w-5xl">
         <AnimatedSection>
           <SectionHeading
