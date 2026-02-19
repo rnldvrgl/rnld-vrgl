@@ -6,12 +6,13 @@ import {
   CloseTag,
   CodeComment,
   CodeHeading,
+  DocType,
   OpenTag,
   SelfClosingTag,
 } from "./code-tags-shared"
 
 // Re-export server-safe components for convenience
-export { CloseTag, CodeComment, CodeHeading, OpenTag, SelfClosingTag }
+export { CloseTag, CodeComment, CodeHeading, DocType, OpenTag, SelfClosingTag }
 
 /** A full section wrapper with opening/closing tags and scroll-triggered animation */
 export function CodeSection({
