@@ -1,56 +1,68 @@
 import { BlogCard } from "@/components/shared/blog-card"
 import { CodeHeading, CodeSection } from "@/components/shared/code-tags"
+import { Button } from "@/components/ui/button"
 import type { BlogPost } from "@/lib/supabase/types"
-import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { HiOutlineArrowRight } from "react-icons/hi2"
 
 export function LatestPostsSection({ posts }: { posts: BlogPost[] }) {
-  if (posts.length === 0) return null
-
   return (
     <CodeSection
-      id="blog"
-      tag="section"
-      attrs={{ id: "blog" }}
+      id="writing"
+      tag="aside"
+      attrs={{ id: "writing" }}
     >
       <CodeHeading tag="h2">
         <div className="flex items-end justify-between">
           <div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Latest Posts
+              Writing
             </h2>
             <p className="mt-1 text-sm text-code-comment">
-              {"// thoughts, tutorials & dev notes"}
+              {"// latest from the blog"}
             </p>
           </div>
-          <Link
-            href="/blog"
-            className="mb-1 hidden items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+          <Button
+            variant="link"
+            asChild
+            className="mb-1 hidden sm:inline-flex group"
           >
-            view all
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+            <Link href="/blog">
+              view all
+              <HiOutlineArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform duration-500" />
+            </Link>
+          </Button>
         </div>
       </CodeHeading>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
-          <BlogCard
-            key={post.id}
-            post={post}
-          />
-        ))}
-      </div>
+      {posts.length === 0 ? (
+        <p className="text-sm text-muted-foreground/60">
+          {"// coming soon..."}
+        </p>
+      ) : (
+        <>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
+              <BlogCard
+                key={post.id}
+                post={post}
+              />
+            ))}
+          </div>
 
-      <div className="mt-8 text-center sm:hidden">
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          view all posts
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
+          <div className="mt-8 text-center sm:hidden group">
+            <Button
+              variant="link"
+              asChild
+            >
+              <Link href="/blog">
+                view all posts
+                <HiOutlineArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform duration-500" />
+              </Link>
+            </Button>
+          </div>
+        </>
+      )}
     </CodeSection>
   )
 }
