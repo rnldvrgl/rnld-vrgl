@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export default function NotFound() {
@@ -7,12 +8,13 @@ export default function NotFound() {
       <p className="mt-4 text-lg text-muted-foreground">
         This page doesn&apos;t exist.
       </p>
-      <Link
-        href="/"
-        className="mt-8 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      <Button
+        variant="link"
+        asChild
+        className="mt-8 text-muted-foreground"
       >
-        &larr; Go home
-      </Link>
+        <Link href="/">&larr; Go home</Link>
+      </Button>
     </section>
   )
 }
