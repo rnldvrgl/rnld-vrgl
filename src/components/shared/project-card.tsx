@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import type { Project } from "@/lib/supabase/types"
 import Image from "next/image"
 import Link from "next/link"
@@ -13,7 +14,7 @@ export function ProjectCard({ project }: { project: Project }) {
       .filter((t): t is NonNullable<typeof t> => t != null) ?? []
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-border/30 bg-card/20 transition-all duration-300 hover:border-border/60 hover:bg-card/40 hover:shadow-lg hover:shadow-background/50">
+    <Card className="group relative overflow-hidden border border-border/30 p-0">
       {/* Cover image with overlay */}
       {project.cover_image && (
         <div className="relative aspect-video overflow-hidden">
@@ -100,6 +101,6 @@ export function ProjectCard({ project }: { project: Project }) {
           </div>
         )}
       </div>
-    </div>
+    </Card>
   )
 }
