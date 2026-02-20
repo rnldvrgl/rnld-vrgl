@@ -69,5 +69,45 @@ const defaultIcon: IconType = HiOutlineCog6Tooth
 
 export function getSkillIcon(iconName: string | null): IconType {
   if (!iconName) return defaultIcon
-  return iconMap[iconName] ?? defaultIcon
+
+  // Try exact match first
+  if (iconMap[iconName]) {
+    return iconMap[iconName]
+  }
+
+  // Try case-insensitive match
+  const lowerIconName = iconName.toLowerCase()
+  const foundKey = Object.keys(iconMap).find(
+    (key) => key.toLowerCase() === lowerIconName,
+  )
+  if (foundKey) {
+    return iconMap[foundKey]
+  }
+
+  // Try adding Si prefix for brand icons
+  const withSiPrefix = `Si${iconName}`
+  if (iconMap[withSiPrefix]) {
+    return iconMap[withSiPrefix]
+  }
+
+  // Try with HiOutline prefix for Heroicons
+  const withHiPrefix = `HiOutline${iconName}`
+  if (iconMap[withHiPrefix]) {
+    return iconMap[withHiPrefix]
+  }
+
+  // Try matching without any prefix
+  const withoutPrefix = iconName.replace(/^(Si|HiOutline)/, "")
+  const matchKey = Object.keys(iconMap).find((key) =>
+    key.toLowerCase().includes(withoutPrefix.toLowerCase()),
+  )
+  if (matchKey) {
+    return iconMap[matchKey]
+  }
+
+  console.warn(
+    `Icon not found for: "${iconName}". Using default. Available icons:`,
+    Object.keys(iconMap),
+  )
+  return defaultIcon
 }

@@ -1,4 +1,5 @@
 import { CodeHeading, CodeSection } from "@/components/shared/code-tags"
+import { Card, CardContent } from "@/components/ui/card"
 import type { Certification } from "@/lib/supabase/types"
 import {
   HiOutlineAcademicCap,
@@ -60,11 +61,11 @@ export function CertificationsSection({
             cert.expiry_date && new Date(cert.expiry_date) < new Date()
 
           return (
-            <div
+            <Card
               key={cert.id}
-              className="group relative rounded-xl border border-border/30 bg-card/20 p-5 transition-all hover:border-border/60 hover:bg-card/40"
+              className="group relative "
             >
-              <div className="flex gap-4">
+              <CardContent className="flex gap-4">
                 {/* Icon */}
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border/40 bg-background/50 text-code-keyword transition-colors group-hover:border-code-keyword/40 group-hover:bg-code-keyword/10">
                   <HiOutlineShieldCheck className="size-5" />
@@ -120,8 +121,8 @@ export function CertificationsSection({
                     </p>
                   )}
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )
         })}
       </div>

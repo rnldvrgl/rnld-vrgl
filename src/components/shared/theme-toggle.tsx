@@ -1,29 +1,31 @@
 "use client"
-import { Button } from "@/components/ui/button"
-import useIsMounted from "@/lib/hooks/useIsMounted"
 import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
+import { useSyncExternalStore } from "react"
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi2"
+
+const emptySubscribe = () => () => {}
 
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme()
-  const isMounted = useIsMounted()
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  )
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark")
   }
 
-  if (!isMounted()) {
+  if (!mounted) {
     return (
-      <Button
-        variant="ghost"
-        size="icon"
-        className="relative size-9 rounded-full border border-border/50 bg-background/60 backdrop-blur-md"
-        aria-label="Toggle theme"
-        disabled
+      <div
+        className="relative flex size-9 items-center justify-center rounded-full border border-border/50 bg-background/60 backdrop-blur-md"
+        aria-hidden
       >
-        <HiOutlineSun className="size-4 text-foreground" />
-      </Button>
+        <span className="size-4" />
+      </div>
     )
   }
 

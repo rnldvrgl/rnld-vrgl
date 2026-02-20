@@ -1,4 +1,5 @@
 import { CodeHeading, CodeSection } from "@/components/shared/code-tags"
+import { Card, CardContent } from "@/components/ui/card"
 import { getSkillIcon } from "@/lib/skill-icons"
 import type { Skill } from "@/lib/supabase/types"
 import {
@@ -69,52 +70,51 @@ export function SkillsSection({ skills }: { skills: Skill[] }) {
         {Object.entries(grouped).map(([category, categorySkills]) => {
           const Icon = categoryIcons[category] || HiOutlineCog6Tooth
           return (
-            <div
-              key={category}
-              className="group rounded-xl border border-border/30 bg-card/20 p-5 transition-all hover:border-border/60 hover:bg-card/40"
-            >
-              {/* Category header */}
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex size-9 items-center justify-center rounded-lg border border-border/40 bg-background/50 text-code-keyword transition-colors group-hover:border-code-keyword/40 group-hover:bg-code-keyword/10">
-                  <Icon className="size-4.5" />
+            <Card key={category}>
+              <CardContent>
+                {/* Category header */}
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex size-9 items-center justify-center rounded-lg border border-border/40 bg-background/50 text-code-keyword transition-colors group-hover:border-code-keyword/40 group-hover:bg-code-keyword/10">
+                    <Icon className="size-4.5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold tracking-tight text-foreground">
+                      {category}
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground/50">
+                      {categorySkills.length}{" "}
+                      {categorySkills.length === 1 ? "skill" : "skills"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-semibold tracking-tight text-foreground">
-                    {category}
-                  </h3>
-                  <p className="text-[10px] text-muted-foreground/50">
-                    {categorySkills.length}{" "}
-                    {categorySkills.length === 1 ? "skill" : "skills"}
-                  </p>
-                </div>
-              </div>
 
-              {/* Skills with proficiency bars */}
-              <div className="space-y-3">
-                {categorySkills.map((skill) => {
-                  const SkillIcon = getSkillIcon(skill.icon_name)
-                  return (
-                    <div key={skill.id}>
-                      <div className="mb-1.5 flex items-center justify-between">
-                        <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <SkillIcon className="size-3.5 text-muted-foreground/60" />
-                          {skill.name}
-                        </span>
-                        <span className="text-[10px] tabular-nums text-muted-foreground/50">
-                          {skill.proficiency}%
-                        </span>
+                {/* Skills with proficiency bars */}
+                <div className="space-y-3">
+                  {categorySkills.map((skill) => {
+                    const SkillIcon = getSkillIcon(skill.icon_name)
+                    return (
+                      <div key={skill.id}>
+                        <div className="mb-1.5 flex items-center justify-between">
+                          <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <SkillIcon className="size-3.5 text-muted-foreground/60" />
+                            {skill.name}
+                          </span>
+                          <span className="text-[10px] tabular-nums text-muted-foreground/50">
+                            {skill.proficiency}%
+                          </span>
+                        </div>
+                        <div className="h-1.5 overflow-hidden rounded-full bg-border/30">
+                          <div
+                            className="h-full rounded-full bg-linear-to-r from-code-keyword/40 to-code-keyword transition-all duration-500"
+                            style={{ width: `${skill.proficiency}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-border/30">
-                        <div
-                          className="h-full rounded-full bg-linear-to-r from-code-keyword/70 to-code-keyword transition-all duration-500"
-                          style={{ width: `${skill.proficiency}%` }}
-                        />
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
           )
         })}
       </div>

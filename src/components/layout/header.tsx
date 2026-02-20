@@ -3,10 +3,11 @@
 import RnldvrglTag from "@/components/shared/rnldvrgl-tag"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 
 const navLinks = [
   { href: "#hero", label: "home", index: "01" },
@@ -24,8 +25,15 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("#hero")
   const [scrolled, setScrolled] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   const isHome = pathname === "/"
+
+  useEffect(() => {
+    // Use timeout to avoid setState in effect warning
+    const timer = setTimeout(() => setMounted(true), 0)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -159,104 +167,117 @@ export function Header() {
 
   const allLinks = [...navLinks, blogPageLink]
 
-  return (
-    <header
-      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        scrolled
-          ? "border-b border-border/50 bg-background/80 backdrop-blur-xl"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 lg:px-8">
-        {/* Logo */}
-        <a
-          href={isHome ? "#hero" : "/"}
-          title="Ronald Vergel Dela Cruz"
-          className="relative z-50 text-sm font-medium tracking-tight text-foreground transition-opacity hover:opacity-70"
-        >
-          <RnldvrglTag />
-        </a>
+  const mobileMenu = mounted
+    ? createPortal(
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              key="mobile-nav"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="fixed inset-0 top-16 z-50 bg-background lg:hidden"
+            >
+              <nav className="flex flex-col gap-2 px-8 pt-8">
+                {allLinks.map((link, i) => {
+                  const isActive = link.href.startsWith("#")
+                    ? activeSection === link.href
+                    : pathname.startsWith(link.href)
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) =>
-            renderNavItem(link, isHome ? activeSection === link.href : false),
+                  return (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ delay: i * 0.04, duration: 0.25 }}
+                    >
+                      {renderNavItem(link, isActive, true)}
+                    </motion.div>
+                  )
+                })}
+              </nav>
+            </motion.div>
           )}
-          <ThemeToggle />
-        </nav>
+        </AnimatePresence>,
+        document.body,
+      )
+    : null
 
-        {/* Mobile toggle */}
-        <div className="flex items-center gap-3 md:hidden">
-          <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="relative z-50"
-            aria-label="Toggle menu"
+  return (
+    <>
+      <header
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+          scrolled || mobileOpen
+            ? "border-b border-border/50 bg-background/80 backdrop-blur-xl"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 lg:px-8">
+          {/* Logo */}
+          <a
+            href={isHome ? "#hero" : "/"}
+            title="Ronald Vergel Dela Cruz"
+            className="relative z-50 text-sm font-medium tracking-tight text-foreground transition-opacity hover:opacity-70"
           >
-            <div className="relative size-5">
-              {/* Top bar */}
-              <motion.span
-                className="absolute left-0 h-0.5 w-5 bg-current"
-                animate={{
-                  rotate: mobileOpen ? 45 : 0,
-                  y: mobileOpen ? 9 : 3,
-                }}
-                transition={{ duration: 0.2 }}
-              />
-              {/* Middle bar */}
-              <motion.span
-                className="absolute left-0 top-1/2 h-0.5 w-5 -translate-y-1/2 bg-current"
-                animate={{
-                  opacity: mobileOpen ? 0 : 1,
-                  x: mobileOpen ? -10 : 0,
-                }}
-                transition={{ duration: 0.2 }}
-              />
-              {/* Bottom bar */}
-              <motion.span
-                className="absolute left-0 h-0.5 w-5 bg-current"
-                animate={{
-                  rotate: mobileOpen ? -45 : 0,
-                  y: mobileOpen ? 9 : 15,
-                }}
-                transition={{ duration: 0.2 }}
-              />
-            </div>
-          </Button>
-        </div>
-      </div>
+            <RnldvrglTag />
+          </a>
 
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-40 flex flex-col justify-center bg-background/98 backdrop-blur-sm md:hidden"
-        >
-          <nav className="flex flex-col gap-2 px-8">
-            {allLinks.map((link, i) => {
-              const isActive = link.href.startsWith("#")
-                ? activeSection === link.href
-                : pathname.startsWith(link.href)
-
-              return (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.06, duration: 0.3 }}
-                >
-                  {renderNavItem(link, isActive, true)}
-                </motion.div>
-              )
-            })}
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-8 lg:flex">
+            {navLinks.map((link) =>
+              renderNavItem(link, isHome ? activeSection === link.href : false),
+            )}
+            <ThemeToggle />
           </nav>
-        </motion.div>
-      )}
-    </header>
+
+          {/* Mobile toggle */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="relative z-50"
+              aria-label="Toggle menu"
+            >
+              <div className="relative flex size-5 items-center justify-center">
+                {/* Top bar → rotates to form \ of X */}
+                <motion.span
+                  className="absolute left-0 h-0.5 w-5 rounded-full bg-current"
+                  animate={{
+                    rotate: mobileOpen ? 45 : 0,
+                    y: mobileOpen ? 0 : -4,
+                  }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                />
+                {/* Middle bar → fades out */}
+                <motion.span
+                  className="absolute left-0 h-0.5 w-5 rounded-full bg-current"
+                  animate={{
+                    opacity: mobileOpen ? 0 : 1,
+                    scaleX: mobileOpen ? 0 : 1,
+                  }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                />
+                {/* Bottom bar → rotates to form / of X */}
+                <motion.span
+                  className="absolute left-0 h-0.5 w-5 rounded-full bg-current"
+                  animate={{
+                    rotate: mobileOpen ? -45 : 0,
+                    y: mobileOpen ? 0 : 4,
+                  }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                />
+              </div>
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile menu rendered via portal */}
+      {mobileMenu}
+    </>
   )
 }

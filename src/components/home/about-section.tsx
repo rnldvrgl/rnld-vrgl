@@ -1,5 +1,6 @@
 import { CodeHeading, CodeSection } from "@/components/shared/code-tags"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import type { Experience, Profile, Project } from "@/lib/supabase/types"
 import Image from "next/image"
 import {
@@ -95,11 +96,11 @@ export function AboutSection({
         </p>
       </CodeHeading>
 
-      <div className="grid gap-10 lg:grid-cols-[280px_1fr]">
+      <div className="grid gap-10 md:grid-cols-[280px_1fr]">
         {/* Left column — Avatar + Socials */}
         <div className="flex flex-col items-center gap-6 lg:items-start">
           {profile.avatar_url && (
-            <div className="relative size-48 overflow-hidden rounded-2xl border-2 border-border/60 shadow-lg shadow-background/50">
+            <div className="relative size-full min-h-80! overflow-hidden rounded-2xl border-2 border-border/60 shadow-lg shadow-background/50">
               <Image
                 src={profile.avatar_url}
                 alt={profile.full_name}
@@ -180,19 +181,18 @@ export function AboutSection({
           </div>
 
           {/* Stats row */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-4">
             {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-lg border border-border/30 bg-card/20 p-4 text-center transition-colors hover:border-border/60 hover:bg-card/40"
-              >
-                <p className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                  {stat.value}
-                </p>
-                <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
-                  {stat.label}
-                </p>
-              </div>
+              <Card key={stat.label}>
+                <CardContent className="text-center">
+                  <p className="text-2xl font-bold tracking-tight text-code-keyword sm:text-3xl">
+                    {stat.value}
+                  </p>
+                  <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
+                    {stat.label}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
