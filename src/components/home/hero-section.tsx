@@ -6,10 +6,54 @@ import {
   DocType,
   OpenTag,
 } from "@/components/shared/code-tags"
+import { useTypingAnimation } from "@/lib/hooks/useTypingAnimation"
 import type { Profile } from "@/lib/supabase/types"
 import { motion } from "framer-motion"
+import { useCallback, useState } from "react"
 
 export function HeroSection({ profile }: { profile: Profile | null }) {
+  const fullName = profile?.full_name ?? "Ronald Vergel Dela Cruz"
+  const headline =
+    profile?.headline ??
+    "Building modern web experiences with clean code and thoughtful design."
+
+  const [cycle, setCycle] = useState(0)
+  const [headlineEnabled, setHeadlineEnabled] = useState(false)
+
+  const handleNameComplete = useCallback(() => {
+    setHeadlineEnabled(true)
+  }, [])
+
+  const handleHeadlineComplete = useCallback(() => {
+    setHeadlineEnabled(false)
+    setCycle((c) => c + 1)
+  }, [])
+
+  const {
+    displayedText: displayedName,
+    isTyping: isNameTyping,
+    isComplete: isNameComplete,
+  } = useTypingAnimation({
+    text: fullName,
+    speed: 100,
+    delay: cycle === 0 ? 2500 : 500,
+    pauseBetween: 1500,
+    enabled: true,
+    onComplete: handleNameComplete,
+    key: cycle,
+  })
+
+  const { displayedText: displayedHeadline, isTyping: isHeadlineTyping } =
+    useTypingAnimation({
+      text: headline,
+      speed: 60,
+      delay: 300,
+      pauseBetween: 3000,
+      enabled: headlineEnabled,
+      onComplete: handleHeadlineComplete,
+      key: `headline-${cycle}`,
+    })
+
   return (
     <section
       id="hero"
@@ -51,13 +95,32 @@ export function HeroSection({ profile }: { profile: Profile | null }) {
           <p className="font-medium uppercase tracking-[0.3em] text-code-attr">
             Full-Stack Developer
           </p>
-          <h1 className="text-5xl font-black tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
-            {profile?.full_name ?? "Ronald Vergel Dela Cruz"}
-          </h1>
-          <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-2xl">
-            {profile?.headline ??
-              "Building modern web experiences with clean code and thoughtful design."}
-          </p>
+          <div className="relative">
+            {/* Invisible text to reserve space and prevent layout shift */}
+            <h1 className="text-5xl font-black tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl opacity-0 pointer-events-none">
+              {fullName}
+            </h1>
+            {/* Visible typing animation */}
+            <h1 className="absolute inset-0 text-5xl font-black tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
+              {displayedName}
+              {(isNameTyping || (isNameComplete && !headlineEnabled)) && (
+                <span className="inline-block w-0.5 h-[0.9em] bg-code-keyword ml-1 animate-pulse" />
+              )}
+            </h1>
+          </div>
+          <div className="relative max-w-2xl">
+            {/* Invisible text to reserve space */}
+            <p className="text-lg leading-relaxed text-muted-foreground sm:text-2xl opacity-0 pointer-events-none">
+              {headline}
+            </p>
+            {/* Visible typing animation */}
+            <p className="absolute inset-0 text-lg leading-relaxed text-muted-foreground sm:text-2xl">
+              {displayedHeadline}
+              {isHeadlineTyping && (
+                <span className="inline-block w-0.5 h-[0.9em] bg-code-keyword ml-1 animate-pulse" />
+              )}
+            </p>
+          </div>
         </motion.div>
 
         <motion.div
