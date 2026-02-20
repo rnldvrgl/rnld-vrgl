@@ -104,7 +104,7 @@ export function HeroSection({ profile }: { profile: Profile | null }) {
             <h1 className="absolute inset-0 text-5xl font-black tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
               {displayedName}
               {(isNameTyping || (isNameComplete && !headlineEnabled)) && (
-                <span className="inline-block w-0.5 h-[0.9em] bg-code-keyword ml-1 animate-pulse" />
+                <span className="inline-block w-2 h-[0.9em] bg-code-keyword ml-1 animate-pulse" />
               )}
             </h1>
           </div>
@@ -117,7 +117,7 @@ export function HeroSection({ profile }: { profile: Profile | null }) {
             <p className="absolute inset-0 text-lg leading-relaxed text-muted-foreground sm:text-2xl">
               {displayedHeadline}
               {isHeadlineTyping && (
-                <span className="inline-block w-0.5 h-[0.9em] bg-code-keyword ml-1 animate-pulse" />
+                <span className="inline-block w-1 h-[0.9em] bg-code-keyword ml-1 animate-pulse" />
               )}
             </p>
           </div>
