@@ -30,7 +30,7 @@ export async function getProjects(
   const supabase = await createSupabaseServerClient()
   let query = supabase
     .from("projects")
-    .select("*, project_tags(*, tag:tags(*))")
+    .select(`*, project_images(*)`)
     .order("sort_order", { ascending: true })
 
   if (options.featured) {
@@ -45,7 +45,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   const supabase = await createSupabaseServerClient()
   const { data } = await supabase
     .from("projects")
-    .select("*, project_tags(*, tag:tags(*))")
+    .select("*, project_images(*)")
     .eq("slug", slug)
     .single()
   return data

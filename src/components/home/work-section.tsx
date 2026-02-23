@@ -70,7 +70,7 @@ export function WorkSection({ experiences }: { experiences: Experience[] }) {
       </CodeHeading>
 
       {/* Summary bar */}
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-6">
           {stats.map((stat) => (
             <div

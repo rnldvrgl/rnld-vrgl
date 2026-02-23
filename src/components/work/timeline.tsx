@@ -33,9 +33,9 @@ function TimelineItem({
   const isPresent = !experience.end_date
 
   return (
-    <div className="group relative md:grid md:grid-cols-[1fr_auto_1fr] md:gap-0">
+    <div className="group relative lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-0">
       {/* Connector dot */}
-      <div className="absolute left-6 top-0 z-10 hidden h-full md:left-1/2 md:block md:-translate-x-1/2">
+      <div className="absolute left-6 top-0 z-10 hidden h-full lg:left-1/2 lg:block lg:-translate-x-1/2">
         <motion.div
           initial={{ scale: 0 }}
           whileInView={{ scale: 1 }}
@@ -53,8 +53,8 @@ function TimelineItem({
 
       {/* Left column content (even items) */}
       <div
-        className={`${isLeft ? "md:pr-16" : "md:order-3 md:pl-16"} ${
-          !isLeft ? "md:col-start-3" : ""
+        className={`${isLeft ? "lg:pr-16" : "lg:order-3 lg:pl-16"} ${
+          !isLeft ? "lg:col-start-3" : ""
         }`}
       >
         <motion.div
@@ -78,11 +78,13 @@ function TimelineItem({
                 {config.label}
               </span>
             </div>
-            <span className="font-mono text-[11px] text-muted-foreground/50">
+            <span className="font-mono text-xs text-muted-foreground/50">
               {formatTimelineDate(experience.start_date)}
               {" — "}
               {isPresent ? (
-                <span className="text-emerald-400/80">Present</span>
+                <span className="text-emerald-600 dark:text-emerald-400/80">
+                  Present
+                </span>
               ) : (
                 formatTimelineDate(experience.end_date!)
               )}
@@ -135,13 +137,13 @@ function TimelineItem({
 
       {/* Center column (connector line area) */}
       <div
-        className={`hidden md:block ${!isLeft ? "md:order-2" : ""}`}
+        className={`hidden lg:block ${!isLeft ? "lg:order-2" : ""}`}
         aria-hidden
       />
 
       {/* Empty column for alternating layout */}
       <div
-        className={`hidden md:block ${isLeft ? "md:order-3" : "md:order-1"}`}
+        className={`hidden lg:block ${isLeft ? "lg:order-3" : "lg:order-1"}`}
         aria-hidden
       />
     </div>
@@ -151,7 +153,7 @@ function TimelineItem({
 /* Mobile-only dot for the vertical line */
 function MobileDot() {
   return (
-    <div className="relative mb-1 flex items-center gap-4 md:hidden">
+    <div className="relative mb-1 flex items-center gap-4 lg:hidden">
       <div className="ml-5.5 size-2.5 rounded-full border border-foreground/30 bg-foreground/50 " />
     </div>
   )
@@ -170,21 +172,21 @@ export function Timeline({ experiences }: { experiences: Experience[] }) {
     <div className="relative">
       {/* Center vertical line — desktop */}
       <div
-        className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-foreground to-border/0 md:block"
+        className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-foreground to-border/0 lg:block"
         aria-hidden
       />
 
       {/* Left vertical line — mobile */}
       <div
-        className="absolute left-6.75 top-0 h-full w-px bg-foreground to-border/0 md:hidden"
+        className="absolute left-6.75 top-0 h-full w-px bg-foreground to-border/0 lg:hidden"
         aria-hidden
       />
 
-      <div className="flex flex-col gap-8 md:gap-12">
+      <div className="flex flex-col gap-8 lg:gap-12">
         {experiences.map((exp, i) => (
           <div key={exp.id}>
             <MobileDot />
-            <div className="pl-14 md:pl-0">
+            <div className="pl-14 lg:pl-0">
               <TimelineItem
                 experience={exp}
                 index={i}

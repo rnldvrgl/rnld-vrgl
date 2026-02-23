@@ -73,16 +73,16 @@
   --accent: oklch(0.94 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0 0 0 / 10%);
-  --input: oklch(0 0 0 / 10%);
-  --ring: oklch(0.708 0 0);
-  /* Code editor palette – light */
-  --code-tag: oklch(0.5 0.2 250);
-  --code-attr: oklch(0.48 0.15 30);
-  --code-string: oklch(0.42 0.18 145);
-  --code-comment: oklch(0.52 0 0);
-  --code-keyword: oklch(0.48 0.22 300);
-  --code-function: oklch(0.5 0.2 60);
+  --border: oklch(0 0 0 / 15%);
+  --input: oklch(0 0 0 / 12%);
+  --ring: oklch(0.62 0 0);
+  /* Code editor palette – light (more saturated for visibility) */
+  --code-tag: oklch(0.45 0.22 250);
+  --code-attr: oklch(0.45 0.18 30);
+  --code-string: oklch(0.38 0.2 145);
+  --code-comment: oklch(0.48 0 0);
+  --code-keyword: oklch(0.42 0.24 300);
+  --code-function: oklch(0.46 0.22 60);
   /* Charts */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -144,6 +144,7 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 @layer base {
@@ -153,11 +154,57 @@ html {
   body {
     @apply bg-background text-foreground;
   }
+}
 
-  /* Hide default cursor on desktop */
-  @media (min-width: 768px) {
-    * {
-      cursor: none !important;
-    }
+/* Custom utility classes */
+@utility text-xxs {
+  font-size: 0.625rem; /* 10px */
+  line-height: 1rem; /* 16px */
+}
+
+/* Hide default cursor on desktop */
+@media (min-width: 768px) {
+  * {
+    cursor: none !important;
+  }
+}
+
+/* Floating ambient animations for gradient orbs */
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, -50px) scale(1.08);
+  }
+  66% {
+    transform: translate(-20px, 30px) scale(0.95);
+  }
+}
+
+@keyframes float-slower {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-30px, 35px) scale(1.05);
+  }
+  66% {
+    transform: translate(25px, -40px) scale(0.95);
+  }
+}
+
+@keyframes float-medium {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(25px, -25px) scale(1.08);
+  }
+  66% {
+    transform: translate(-15px, 35px) scale(0.92);
   }
 }

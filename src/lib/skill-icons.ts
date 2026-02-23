@@ -15,6 +15,7 @@ import {
   SiGraphql,
   SiHtml5,
   SiJavascript,
+  SiLaravel,
   SiMongodb,
   SiNextdotjs,
   SiNodedotjs,
@@ -45,6 +46,7 @@ const iconMap: Record<string, IconType> = {
   SiHtml5: SiHtml5,
   SiCss3: SiCss3,
   SiNodedotjs: SiNodedotjs,
+  SiLaravel: SiLaravel,
   SiPython: SiPython,
   SiGraphql: SiGraphql,
   SiPostgresql: SiPostgresql,
@@ -64,50 +66,47 @@ const iconMap: Record<string, IconType> = {
   HiOutlineShieldCheck: HiOutlineShieldCheck,
 }
 
+const aliasMap: Record<string, string> = {
+  "next.js": "SiNextdotjs",
+  "tailwind css": "SiTailwindcss",
+  tailwind: "SiTailwindcss",
+  typescript: "SiTypescript",
+  javascript: "SiJavascript",
+  react: "SiReact",
+  "node.js": "SiNodedotjs",
+  nodejs: "SiNodedotjs",
+  python: "SiPython",
+  graphql: "SiGraphql",
+  laravel: "SiLaravel",
+  postgresql: "SiPostgresql",
+  postgres: "SiPostgresql",
+  supabase: "SiSupabase",
+  mongodb: "SiMongodb",
+  redis: "SiRedis",
+  git: "SiGit",
+  docker: "SiDocker",
+  vercel: "SiVercel",
+  figma: "SiFigma",
+  html5: "SiHtml5",
+  html: "SiHtml5",
+  css3: "SiCss3",
+  css: "SiCss3",
+  "ci/cd": "HiOutlineCommandLine",
+}
+
 /** Default icon when `icon_name` is null or not found in the map */
 const defaultIcon: IconType = HiOutlineCog6Tooth
 
 export function getSkillIcon(iconName: string | null): IconType {
   if (!iconName) return defaultIcon
 
-  // Try exact match first
-  if (iconMap[iconName]) {
-    return iconMap[iconName]
-  }
+  // Exact match (for keys already stored as Si* or HiOutline*)
+  if (iconMap[iconName]) return iconMap[iconName]
 
-  // Try case-insensitive match
-  const lowerIconName = iconName.toLowerCase()
-  const foundKey = Object.keys(iconMap).find(
-    (key) => key.toLowerCase() === lowerIconName,
-  )
-  if (foundKey) {
-    return iconMap[foundKey]
-  }
+  // Alias lookup (for human-readable names like "Next.js", "Tailwind CSS")
+  const alias = aliasMap[iconName.toLowerCase()]
+  if (alias && iconMap[alias]) return iconMap[alias]
 
-  // Try adding Si prefix for brand icons
-  const withSiPrefix = `Si${iconName}`
-  if (iconMap[withSiPrefix]) {
-    return iconMap[withSiPrefix]
-  }
-
-  // Try with HiOutline prefix for Heroicons
-  const withHiPrefix = `HiOutline${iconName}`
-  if (iconMap[withHiPrefix]) {
-    return iconMap[withHiPrefix]
-  }
-
-  // Try matching without any prefix
-  const withoutPrefix = iconName.replace(/^(Si|HiOutline)/, "")
-  const matchKey = Object.keys(iconMap).find((key) =>
-    key.toLowerCase().includes(withoutPrefix.toLowerCase()),
-  )
-  if (matchKey) {
-    return iconMap[matchKey]
-  }
-
-  console.warn(
-    `Icon not found for: "${iconName}". Using default. Available icons:`,
-    Object.keys(iconMap),
-  )
+  console.warn(`Icon not found for: "${iconName}". Using default.`)
   return defaultIcon
 }

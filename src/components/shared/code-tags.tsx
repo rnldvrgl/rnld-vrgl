@@ -38,7 +38,7 @@ export function CodeSection({
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={`relative py-24 ${className}`}
       >
-        <div className="mx-auto max-w-5xl px-6">
+        <div className="mx-auto max-w-6xl px-6">
           <div className="mb-8">
             <OpenTag
               tag={tag}

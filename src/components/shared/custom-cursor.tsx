@@ -1,10 +1,12 @@
 "use client"
 
 import { motion, useMotionValue, useSpring } from "framer-motion"
+import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 
 export function CustomCursor() {
   const [isPointer, setIsPointer] = useState(false)
+  const { theme } = useTheme()
   const [isHidden, setIsHidden] = useState(false)
   const [isTouchDevice, setIsTouchDevice] = useState(true)
   const cursorX = useMotionValue(-100)
@@ -68,16 +70,20 @@ export function CustomCursor() {
         }}
       >
         <motion.div
-          className="relative -left-4 -top-4 size-8 rounded-full border border-foreground/20 transition-colors"
+          className="relative -left-4 -top-4 size-8 rounded-full border-2 transition-colors"
           animate={{
             scale: isPointer ? 1.5 : 1,
             borderColor: isPointer
-              ? "rgba(var(--foreground) / 0.4)"
-              : "rgba(var(--foreground) / 0.2)",
+              ? theme === "dark"
+                ? "oklch(0.75 0.22 290 / 0.6)"
+                : "oklch(0.50 0.18 290 / 0.7)"
+              : theme === "dark"
+                ? "oklch(0.85 0.05 290 / 0.25)"
+                : "oklch(0.40 0.05 290 / 0.30)",
           }}
           transition={{
             type: "spring",
-            stiffness: 500,
+            stiffness: 400,
             damping: 28,
           }}
         />
@@ -92,13 +98,20 @@ export function CustomCursor() {
         }}
       >
         <motion.div
-          className="relative -left-1 -top-1 size-2 rounded-full bg-foreground"
+          className="relative -left-1 -top-1 size-2 rounded-full transition-colors"
           animate={{
             scale: isPointer ? 0.8 : 1,
+            backgroundColor: isPointer
+              ? theme === "dark"
+                ? "oklch(0.75 0.22 290)"
+                : "oklch(0.50 0.18 290)"
+              : theme === "dark"
+                ? "oklch(0.85 0.05 290 / 0.8)"
+                : "oklch(0.40 0.05 290 / 0.9)",
           }}
           transition={{
             type: "spring",
-            stiffness: 500,
+            stiffness: 400,
             damping: 28,
           }}
         />

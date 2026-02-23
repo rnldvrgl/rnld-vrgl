@@ -10,15 +10,15 @@ import { useCallback, useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 
 const navLinks = [
-  { href: "#hero", label: "home", index: "01" },
-  { href: "#about", label: "about", index: "02" },
-  { href: "#expertise", label: "expertise", index: "03" },
-  { href: "#work", label: "work", index: "04" },
-  { href: "#projects", label: "projects", index: "05" },
-  { href: "#contact", label: "contact", index: "06" },
+  { href: "#hero", label: "home", ext: ".tsx", index: "01" },
+  { href: "#about", label: "about", ext: ".tsx", index: "02" },
+  { href: "#expertise", label: "expertise", ext: ".tsx", index: "03" },
+  { href: "#work", label: "work", ext: ".tsx", index: "04" },
+  { href: "#projects", label: "projects", ext: ".tsx", index: "05" },
+  { href: "#contact", label: "contact", ext: ".tsx", index: "06" },
 ]
 
-const blogPageLink = { href: "/blog", label: "blog", index: "07" }
+const blogPageLink = { href: "/blog", label: "blog", ext: ".mdx", index: "07" }
 
 export function Header() {
   const pathname = usePathname()
@@ -26,16 +26,15 @@ export function Header() {
   const [activeSection, setActiveSection] = useState("#hero")
   const [scrolled, setScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [isNavigating, setIsNavigating] = useState(false)
 
   const isHome = pathname === "/"
 
   useEffect(() => {
-    // Use timeout to avoid setState in effect warning
     const timer = setTimeout(() => setMounted(true), 0)
     return () => clearTimeout(timer)
   }, [])
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden"
@@ -47,12 +46,13 @@ export function Header() {
     }
   }, [mobileOpen])
 
-  // Track scroll position for active section and header blur
   useEffect(() => {
     if (!isHome) return
 
     const handleScroll = () => {
       setScrolled(window.scrollY > 20)
+
+      if (isNavigating) return
 
       const sections = navLinks.map((l) => l.href.slice(1))
       let current = sections[0]
@@ -69,67 +69,51 @@ export function Header() {
     window.addEventListener("scroll", handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [isHome])
+  }, [isHome, isNavigating])
 
   const handleNavClick = useCallback(
     (href: string) => {
       setMobileOpen(false)
       if (!isHome && href.startsWith("#")) {
-        // Navigate to home page first, then scroll
         window.location.href = `/${href}`
         return
+      }
+
+      // If navigating to an anchor on the home page
+      if (isHome && href.startsWith("#")) {
+        setIsNavigating(true)
+        setActiveSection(href)
+        // Re-enable scroll-spy after smooth scroll completes
+        setTimeout(() => {
+          setIsNavigating(false)
+        }, 1500)
       }
     },
     [isHome],
   )
 
-  const renderNavItem = (
-    link: { href: string; label: string; index: string },
+  const renderTabItem = (
+    link: { href: string; label: string; ext: string; index: string },
     isActive: boolean,
-    isMobile = false,
   ) => {
     const isAnchor = link.href.startsWith("#")
+    const resolvedHref = isAnchor && !isHome ? `/${link.href}` : link.href
 
-    const inner = isMobile ? (
+    const inner = (
       <>
-        <span className="font-mono text-xs text-muted-foreground/50">
+        <span className="font-mono text-[10px] text-muted-foreground/50 mr-1">
           {link.index}
+          {" // "}
         </span>
-        <span className="text-xs text-muted-foreground/40">{"//"}</span>
-        <span
-          className={`text-2xl font-light tracking-wide ${
-            isActive
-              ? "text-foreground"
-              : "text-muted-foreground/70 group-hover:text-foreground"
-          }`}
-        >
-          {link.label}
-        </span>
-      </>
-    ) : (
-      <>
-        <span className="font-mono text-[10px] text-muted-foreground/60 transition-colors group-hover:text-muted-foreground">
-          {link.index}
-        </span>
-        <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60 transition-colors group-hover:text-muted-foreground">
-          {"//"}
-        </span>
-        <span
-          className={`text-[13px] font-medium tracking-wide transition-colors ${
-            isActive
-              ? "text-foreground"
-              : "text-muted-foreground/80 group-hover:text-foreground"
-          }`}
-        >
-          {link.label}
-        </span>
+        <span className="text-xs text-muted-foreground/80">{link.label}</span>
+        <span className="text-xs text-muted-foreground/30">{link.ext}</span>
         {isActive && (
           <motion.div
-            layoutId="nav-indicator"
-            className="absolute -bottom-0.5 left-0 h-px w-full bg-foreground"
+            layoutId="editor-tab-indicator"
+            className="absolute inset-x-0 bottom-0 h-0.5 bg-code-keyword"
             transition={{
               type: "spring",
-              stiffness: 380,
+              stiffness: 400,
               damping: 30,
             }}
           />
@@ -137,16 +121,19 @@ export function Header() {
       </>
     )
 
-    if (isAnchor) {
-      // On non-home pages, link to /<hash> so it navigates home first
-      const resolvedHref = isHome ? link.href : `/${link.href}`
+    const classes = `relative flex items-center gap-0.5 px-4 py-2.5 transition-colors ${
+      isActive
+        ? "bg-background/80 text-foreground dark:bg-background/50"
+        : "text-muted-foreground/60 hover:bg-background/40 hover:text-muted-foreground dark:hover:bg-background/20"
+    }`
 
+    if (isAnchor) {
       return (
         <a
           key={link.href}
           href={resolvedHref}
           onClick={() => handleNavClick(link.href)}
-          className={`group ${isMobile ? "flex items-baseline gap-3 py-3" : "relative flex items-baseline gap-2 py-2"}`}
+          className={classes}
         >
           {inner}
         </a>
@@ -158,7 +145,58 @@ export function Header() {
         key={link.href}
         href={link.href}
         onClick={() => setMobileOpen(false)}
-        className={`group ${isMobile ? "flex items-baseline gap-3 py-3" : "relative flex items-baseline gap-2 py-2"}`}
+        className={classes}
+      >
+        {inner}
+      </Link>
+    )
+  }
+
+  const renderMobileItem = (
+    link: { href: string; label: string; ext: string; index: string },
+    isActive: boolean,
+  ) => {
+    const isAnchor = link.href.startsWith("#")
+    const resolvedHref = isAnchor && !isHome ? `/${link.href}` : link.href
+
+    const inner = (
+      <>
+        <span className="font-mono text-xs text-muted-foreground/50">
+          {link.index}
+        </span>
+        <span className="text-xs text-muted-foreground/40">{"// "}</span>
+        <span
+          className={`text-2xl font-light tracking-wide ${
+            isActive
+              ? "text-foreground"
+              : "text-muted-foreground/70 group-hover:text-foreground"
+          }`}
+        >
+          {link.label}
+        </span>
+        <span className="text-sm text-muted-foreground/30">{link.ext}</span>
+      </>
+    )
+
+    if (isAnchor) {
+      return (
+        <a
+          key={link.href}
+          href={resolvedHref}
+          onClick={() => handleNavClick(link.href)}
+          className="group flex items-baseline gap-3 py-3"
+        >
+          {inner}
+        </a>
+      )
+    }
+
+    return (
+      <Link
+        key={link.href}
+        href={link.href}
+        onClick={() => setMobileOpen(false)}
+        className="group flex items-baseline gap-3 py-3"
       >
         {inner}
       </Link>
@@ -177,7 +215,7 @@ export function Header() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="fixed inset-0 top-16 z-50 bg-background lg:hidden"
+              className="fixed inset-0 top-12 z-50 bg-background xl:hidden"
             >
               <nav className="flex flex-col gap-2 px-8 pt-8">
                 {allLinks.map((link, i) => {
@@ -193,7 +231,7 @@ export function Header() {
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ delay: i * 0.04, duration: 0.25 }}
                     >
-                      {renderNavItem(link, isActive, true)}
+                      {renderMobileItem(link, isActive)}
                     </motion.div>
                   )
                 })}
@@ -210,40 +248,43 @@ export function Header() {
       <header
         className={`fixed top-0 z-50 w-full transition-all duration-300 ${
           scrolled || mobileOpen
-            ? "border-b border-border/50 bg-background/80 backdrop-blur-xl"
+            ? "border-b border-border/30 bg-background/80 backdrop-blur-xl dark:bg-background/70"
             : "bg-transparent"
         }`}
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 lg:px-8">
-          {/* Logo */}
+        <div className="mx-auto flex h-12 max-w-6xl items-center px-0 lg:px-0">
           <a
             href={isHome ? "#hero" : "/"}
             title="Ronald Vergel Dela Cruz"
-            className="relative z-50 text-sm font-medium tracking-tight text-foreground transition-opacity hover:opacity-70"
+            className="transition-opacity hover:opacity-70 px-5"
           >
             <RnldvrglTag />
           </a>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-8 lg:flex">
-            {navLinks.map((link) =>
-              renderNavItem(link, isHome ? activeSection === link.href : false),
-            )}
+          <div className="ml-auto flex h-full items-center space-x-3  px:3 xl:px-5">
+            {/* Desktop nav — editor tabs */}
+            <nav className="hidden flex-1 items-center overflow-hidden xl:flex">
+              {navLinks.map((link) =>
+                renderTabItem(
+                  link,
+                  isHome ? activeSection === link.href : false,
+                ),
+              )}
+            </nav>
+            {/* theme toggle */}
             <ThemeToggle />
-          </nav>
+          </div>
 
           {/* Mobile toggle */}
-          <div className="flex items-center gap-3 lg:hidden">
-            <ThemeToggle />
+          <div className="flex items-center  px-3 xl:hidden">
             <Button
               variant="ghost"
-              size="icon"
+              size="icon-sm"
               onClick={() => setMobileOpen(!mobileOpen)}
               className="relative z-50"
               aria-label="Toggle menu"
             >
               <div className="relative flex size-5 items-center justify-center">
-                {/* Top bar → rotates to form \ of X */}
                 <motion.span
                   className="absolute left-0 h-0.5 w-5 rounded-full bg-current"
                   animate={{
@@ -252,7 +293,6 @@ export function Header() {
                   }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                 />
-                {/* Middle bar → fades out */}
                 <motion.span
                   className="absolute left-0 h-0.5 w-5 rounded-full bg-current"
                   animate={{
@@ -261,7 +301,6 @@ export function Header() {
                   }}
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                 />
-                {/* Bottom bar → rotates to form / of X */}
                 <motion.span
                   className="absolute left-0 h-0.5 w-5 rounded-full bg-current"
                   animate={{
@@ -276,7 +315,6 @@ export function Header() {
         </div>
       </header>
 
-      {/* Mobile menu rendered via portal */}
       {mobileMenu}
     </>
   )

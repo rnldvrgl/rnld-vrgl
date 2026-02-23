@@ -1,6 +1,6 @@
+import { CountUpStats, type StatItem } from "@/components/home/count-up-stats"
 import { CodeHeading, CodeSection } from "@/components/shared/code-tags"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import type { Experience, Profile, Project } from "@/lib/supabase/types"
 import Image from "next/image"
 import {
@@ -57,17 +57,20 @@ export function AboutSection({
         })()
       : 0
   const projectCount = projects.length
-  const techStack = new Set(
-    experiences.flatMap(
-      (e) =>
-        e.experience_skills?.map((es) => es.skill?.name).filter(Boolean) ?? [],
-    ),
-  )
 
-  const stats = [
-    { label: "Years Experience", value: `${yearsOfExperience}+` },
-    { label: "Projects Built", value: `${projectCount}+` },
-    { label: "Technologies", value: `${techStack.size}+` },
+  const stats: StatItem[] = [
+    {
+      label: "Years Experience",
+      value: yearsOfExperience,
+      suffix: "+",
+      icon: "experience",
+    },
+    {
+      label: "Projects Built",
+      value: projectCount,
+      suffix: "+",
+      icon: "projects",
+    },
   ]
 
   const socials = [
@@ -100,18 +103,20 @@ export function AboutSection({
         {/* Left column — Avatar + Socials */}
         <div className="flex flex-col items-center gap-6 lg:items-start">
           {profile.avatar_url && (
-            <div className="relative size-full min-h-80! overflow-hidden rounded-2xl border-2 border-border/60 shadow-lg shadow-background/50">
+            <div className="group/avatar relative mx-auto aspect-3/4 w-full max-w-70 overflow-hidden rounded-2xl border border-border/40 shadow-lg shadow-black/5 dark:border-border/30 dark:shadow-black/20 md:mx-0">
               <Image
                 src={profile.avatar_url}
                 alt={profile.full_name}
                 fill
-                className="object-cover"
-                sizes="192px"
+                className="object-cover object-[center_20%]"
+                sizes="280px"
                 priority
               />
+              {/* Bottom gradient — dark only for code overlay readability */}
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-black/60 to-transparent" />
               {/* Decorative code tag overlay */}
-              <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-background/90 to-transparent px-3 pb-2 pt-6">
-                <span className="text-[10px] text-code-tag">
+              <div className="absolute bottom-0 left-0 right-0 px-3 pb-2">
+                <span className="text-xs text-white/80 bg-background/50 px-1.5 py-0.5 rounded-md backdrop-blur-sm">
                   &lt;<span className="text-code-keyword">img</span>{" "}
                   <span className="text-code-attr">alt</span>=
                   <span className="text-code-string">&quot;me&quot;</span> /&gt;
@@ -120,13 +125,14 @@ export function AboutSection({
             </div>
           )}
 
-          {/* Social links */}
-          <div className="flex items-center gap-3">
+          {/* Social links — Apple frosted pill */}
+          <div className="flex items-center justify-around gap-1 w-full rounded-full border border-border/40 bg-card/50 p-1 backdrop-blur-sm dark:border-border/20 dark:bg-card/30">
             {socials.map((social) => (
               <Button
                 key={social.label}
                 variant="ghost"
                 size="icon"
+                className="rounded-full"
                 asChild
               >
                 <a
@@ -150,7 +156,7 @@ export function AboutSection({
           {/* Resume button */}
           {profile.resume_url && (
             <Button
-              variant="outline"
+              className="w-full rounded-xl group"
               asChild
             >
               <a
@@ -158,7 +164,7 @@ export function AboutSection({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <HiOutlineDocumentArrowDown className="size-4" />
+                <HiOutlineDocumentArrowDown className="size-4 group-hover:animate-bounce transition-all duration-100" />
                 Download Resume
               </a>
             </Button>
@@ -167,12 +173,13 @@ export function AboutSection({
 
         {/* Right column — Bio + Stats */}
         <div className="space-y-8">
-          <div className="space-y-4">
+          {/* Bio in Apple frosted glass card */}
+          <div className="rounded-xl border border-border/40 bg-card/40 p-6 backdrop-blur-sm dark:border-border/20 dark:bg-card/15">
             <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
               {profile.bio}
             </p>
             {profile.location && (
-              <p className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+              <p className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground">
                 <HiOutlineMapPin className="size-3.5 text-code-keyword" />
                 Based in{" "}
                 <span className="text-foreground">{profile.location}</span>
@@ -180,21 +187,8 @@ export function AboutSection({
             )}
           </div>
 
-          {/* Stats row */}
-          <div className="grid md:grid-cols-3 gap-4">
-            {stats.map((stat) => (
-              <Card key={stat.label}>
-                <CardContent className="text-center">
-                  <p className="text-2xl font-bold tracking-tight text-code-keyword sm:text-3xl">
-                    {stat.value}
-                  </p>
-                  <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
-                    {stat.label}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {/* Stats row with count-up animation */}
+          <CountUpStats stats={stats} />
         </div>
       </div>
     </CodeSection>

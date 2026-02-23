@@ -28,7 +28,6 @@ export interface Skill {
   name: string
   category_id: string | null
   category?: SkillCategory
-  icon_name: string | null
   proficiency: number
   sort_order: number
   created_at: string
@@ -52,16 +51,19 @@ export interface Project {
   github_url: string | null
   featured: boolean
   sort_order: number
+  tags: string[]
   created_at: string
   updated_at: string
-  project_tags?: ProjectTag[]
+  project_images?: ProjectImage[]
 }
 
-export interface ProjectTag {
+export interface ProjectImage {
   id: string
   project_id: string
-  tag_id: string
-  tag?: Tag
+  image_url: string
+  caption: string | null
+  sort_order: number
+  created_at: string
 }
 
 export interface BlogPost {
@@ -120,5 +122,15 @@ export interface Certification {
   credential_id: string | null
   credential_url: string | null
   sort_order: number
+  created_at: string
+}
+
+export interface ContactSubmission {
+  id: string
+  name: string
+  email: string
+  subject: string
+  message: string
+  read: boolean
   created_at: string
 }

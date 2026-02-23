@@ -7,7 +7,6 @@ import { motion } from "framer-motion"
 const filters: { value: "all" | ExperienceType; label: string }[] = [
   { value: "all", label: "All" },
   { value: "work", label: "Employment" },
-  { value: "project", label: "Projects" },
   { value: "freelance", label: "Freelance" },
 ]
 

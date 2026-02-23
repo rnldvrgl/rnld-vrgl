@@ -1,6 +1,7 @@
 import { Footer } from "@/components/layout/footer"
 import { Header } from "@/components/layout/header"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { CodeEditorBackground } from "@/components/shared/code-editor-background"
 import { CustomCursor } from "@/components/shared/custom-cursor"
 import { ScrollToTop } from "@/components/shared/scroll-to-top"
 import type { Metadata } from "next"
@@ -15,16 +16,16 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ronald Vergel Dela Cruz | Full-Stack Developer",
+    default: "Ronald Vergel Dela Cruz | Full-Stack Web Developer",
     template: "%s | Ronald Vergel Dela Cruz",
   },
   description:
     "Full-stack developer specializing in modern web technologies. View my projects, blog posts, and more.",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://rnldvrgl.dev",
+    process.env.NEXT_PUBLIC_SITE_URL || "https://rnld-vrgl.vercel.app",
   ),
   openGraph: {
-    title: "Ronald Vergel Dela Cruz | Full-Stack Developer",
+    title: "Ronald Vergel Dela Cruz | Full-Stack Web Developer",
     description:
       "Full-stack developer specializing in modern web technologies.",
     type: "website",
@@ -65,7 +66,7 @@ export default function RootLayout({
             <Footer />
             <ScrollToTop />
             <CustomCursor />
-            {/* Subtle grid background */}
+            <CodeEditorBackground />
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-size-[4rem_4rem] opacity-30 -z-999" />
           </div>
         </ThemeProvider>
