@@ -1,6 +1,7 @@
 import { Footer } from "@/components/layout/footer"
 import { Header } from "@/components/layout/header"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { AiChatWidget } from "@/components/shared/ai-chat-widget"
 import { CodeEditorBackground } from "@/components/shared/code-editor-background"
 import { CustomCursor } from "@/components/shared/custom-cursor"
 import { ScrollToTop } from "@/components/shared/scroll-to-top"
@@ -66,6 +67,7 @@ export default function RootLayout({
             <Footer />
             <ScrollToTop />
             <CustomCursor />
+            <AiChatWidget />
             <CodeEditorBackground />
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-size-[4rem_4rem] opacity-30 -z-999" />
           </div>
