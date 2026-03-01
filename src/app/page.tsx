@@ -2,6 +2,7 @@ import { AboutSection } from "@/components/home/about-section"
 import { CertificationsSection } from "@/components/home/certifications-section"
 import { ContactSection } from "@/components/home/contact-section"
 import { FeaturedProjectsSection } from "@/components/home/featured-projects-section"
+import { FeedbackSection } from "@/components/home/feedback-section"
 import { HeroSection } from "@/components/home/hero-section"
 import { LatestPostsSection } from "@/components/home/latest-posts-section"
 import { SkillsSection } from "@/components/home/skills-section"
@@ -11,6 +12,7 @@ import {
   getBlogPosts,
   getCertifications,
   getExperiences,
+  getFeedbacks,
   getProfile,
   getProjects,
   getSkills,
@@ -26,6 +28,7 @@ export default async function HomePage() {
     latestPosts,
     experiences,
     certifications,
+    feedbacks,
   ] = await Promise.all([
     getProfile(),
     getSkills(),
@@ -33,6 +36,7 @@ export default async function HomePage() {
     getBlogPosts({ limit: 3 }),
     getExperiences(),
     getCertifications(),
+    getFeedbacks(),
   ])
 
   const featuredProjects = allProjects.filter((p) => p.featured)
@@ -50,6 +54,7 @@ export default async function HomePage() {
       <CertificationsSection certifications={certifications} />
       <FeaturedProjectsSection projects={featuredProjects} />
       <LatestPostsSection posts={latestPosts} />
+      <FeedbackSection feedbacks={feedbacks} />
       <ContactSection profile={profile} />
 
       {/* Document close */}

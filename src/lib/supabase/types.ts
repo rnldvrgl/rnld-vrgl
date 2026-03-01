@@ -134,3 +134,12 @@ export interface ContactSubmission {
   read: boolean
   created_at: string
 }
+
+export interface Feedback {
+  id: string
+  name: string | null
+  stars: number
+  comment: string
+  approved: boolean
+  created_at: string
+}

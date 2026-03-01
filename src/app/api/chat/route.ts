@@ -21,10 +21,8 @@ export async function POST(req: NextRequest) {
 
     const apiKey = process.env.AI_API_KEY
     const apiUrl =
-      process.env.AI_API_URL ||
-      "https://openrouter.ai/api/v1/chat/completions"
-    const model =
-      process.env.AI_MODEL || "mistralai/mistral-7b-instruct:free"
+      process.env.AI_API_URL || "https://openrouter.ai/api/v1/chat/completions"
+    const model = process.env.AI_MODEL || "mistralai/mistral-7b-instruct:free"
 
     if (!apiKey) {
       // Fallback: return a helpful static response when no API key is configured

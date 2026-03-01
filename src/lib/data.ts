@@ -4,6 +4,7 @@ import type {
   Certification,
   Experience,
   ExperienceType,
+  Feedback,
   Profile,
   Project,
   Skill,
@@ -114,5 +115,15 @@ export async function getCertifications(): Promise<Certification[]> {
     .from("certifications")
     .select("*")
     .order("sort_order", { ascending: true })
+  return data ?? []
+}
+
+export async function getFeedbacks(): Promise<Feedback[]> {
+  const supabase = await createSupabaseServerClient()
+  const { data } = await supabase
+    .from("feedbacks")
+    .select("*")
+    .eq("approved", true)
+    .order("created_at", { ascending: false })
   return data ?? []
 }
