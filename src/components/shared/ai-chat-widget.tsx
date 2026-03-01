@@ -1,7 +1,14 @@
 "use client"
 
+import { MarkdownRenderer } from "@/components/shared/markdown-renderer"
 import { AnimatePresence, motion } from "framer-motion"
-import { useCallback, useEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react"
 import {
   HiOutlineChatBubbleLeftRight,
   HiOutlinePaperAirplane,
@@ -13,6 +20,37 @@ interface Message {
   id: string
   role: "user" | "assistant"
   content: string
+  timestamp: Date
+}
+
+function formatTimestamp(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "2-digit",
+    year: "numeric",
+  })
+}
+
+// Reformat inline date strings inside AI response text
+// Handles MM-DD-YYYY, YYYY-MM-DD, and MM/DD/YYYY
+function reformatDatesInText(text: string): string {
+  // MM-DD-YYYY or MM/DD/YYYY
+  text = text.replace(
+    /\b(0?[1-9]|1[0-2])[-\/](0?[1-9]|[12]\d|3[01])[-\/](\d{4})\b/g,
+    (_, m, d, y) => {
+      const date = new Date(`${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`)
+      return isNaN(date.getTime()) ? _ : formatTimestamp(date)
+    },
+  )
+  // YYYY-MM-DD (ISO)
+  text = text.replace(
+    /\b(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\b/g,
+    (_, y, m, d) => {
+      const date = new Date(`${y}-${m}-${d}`)
+      return isNaN(date.getTime()) ? _ : formatTimestamp(date)
+    },
+  )
+  return text
 }
 
 function TypingIndicator() {
@@ -42,19 +80,33 @@ export function AiChatWidget() {
       role: "assistant",
       content:
         "Hi! 👋 I'm an AI assistant for Ronald's portfolio. Ask me anything about his projects, skills, or experience!",
+      timestamp: new Date(),
     },
   ])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const lastMsgRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll to bottom on new messages
+  // Jump to bottom instantly before paint when the panel opens (no visible scroll)
+  useLayoutEffect(() => {
+    if (!open) return
+    const el = scrollRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [open])
+
+  // On new messages: scroll so the START of the new message is visible
+  // On loading indicator: scroll to bottom so it's visible
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    if (!open) return
+    if (loading) {
+      const el = scrollRef.current
+      if (el) el.scrollTop = el.scrollHeight
+    } else {
+      lastMsgRef.current?.scrollIntoView({ block: "start", behavior: "smooth" })
     }
-  }, [messages, loading])
+  }, [messages, loading, open])
 
   // Focus input when opening
   useEffect(() => {
@@ -71,6 +123,7 @@ export function AiChatWidget() {
       id: `user-${Date.now()}`,
       role: "user",
       content: text,
+      timestamp: new Date(),
     }
 
     setMessages((prev) => [...prev, userMsg])
@@ -95,7 +148,10 @@ export function AiChatWidget() {
         {
           id: `assistant-${Date.now()}`,
           role: "assistant",
-          content: data.message || data.error || "Something went wrong.",
+          content: reformatDatesInText(
+            data.message || data.error || "Something went wrong.",
+          ),
+          timestamp: new Date(),
         },
       ])
     } catch {
@@ -104,7 +160,10 @@ export function AiChatWidget() {
         {
           id: `error-${Date.now()}`,
           role: "assistant",
-          content: "Sorry, I couldn't connect. Please try again!",
+          content: reformatDatesInText(
+            "Sorry, I couldn't connect. Please try again!",
+          ),
+          timestamp: new Date(),
         },
       ])
     } finally {
@@ -129,7 +188,7 @@ export function AiChatWidget() {
           >
             <HiOutlineChatBubbleLeftRight className="h-6 w-6" />
             {/* Pulse ring */}
-            <span className="absolute inset-0 rounded-full animate-ping bg-code-keyword/20" />
+            <span className="absolute inset-0 rounded-full animate-ping  bg-code-keyword/20" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -169,10 +228,13 @@ export function AiChatWidget() {
               ref={scrollRef}
               className="flex-1 overflow-y-auto px-4 py-3 space-y-3"
             >
-              {messages.map((msg) => (
+              {messages.map((msg, i) => (
                 <div
                   key={msg.id}
-                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                  ref={i === messages.length - 1 ? lastMsgRef : null}
+                  className={`flex flex-col gap-0.5 ${
+                    msg.role === "user" ? "items-end" : "items-start"
+                  }`}
                 >
                   <div
                     className={`max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
@@ -181,8 +243,18 @@ export function AiChatWidget() {
                         : "bg-muted/50 text-foreground"
                     }`}
                   >
-                    {msg.content}
+                    {msg.role === "assistant" ? (
+                      <MarkdownRenderer
+                        content={msg.content}
+                        compact
+                      />
+                    ) : (
+                      msg.content
+                    )}
                   </div>
+                  <span className="px-1 text-[9px] text-muted-foreground/50">
+                    {formatTimestamp(msg.timestamp)}
+                  </span>
                 </div>
               ))}
               {loading && (
