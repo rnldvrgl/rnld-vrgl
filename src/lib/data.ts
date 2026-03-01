@@ -123,7 +123,6 @@ export async function getFeedbacks(): Promise<Feedback[]> {
   const { data } = await supabase
     .from("feedbacks")
     .select("*")
-    .eq("approved", true)
     .order("created_at", { ascending: false })
   return data ?? []
 }

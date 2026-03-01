@@ -140,6 +140,5 @@ export interface Feedback {
   name: string | null
   stars: number
   comment: string
-  approved: boolean
   created_at: string
 }

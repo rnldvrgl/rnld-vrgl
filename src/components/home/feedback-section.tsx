@@ -19,6 +19,8 @@ import {
 } from "react-icons/hi2"
 
 /* ────────────────── Star Rating ────────────────── */
+const STAR_LABELS = ["Terrible", "Poor", "Okay", "Good", "Excellent"]
+
 function StarRating({
   value,
   onChange,
@@ -31,32 +33,64 @@ function StarRating({
   size?: "sm" | "md"
 }) {
   const [hover, setHover] = useState(0)
-  const sizeClass = size === "sm" ? "h-3.5 w-3.5" : "h-6 w-6"
+  const sizeClass = size === "sm" ? "h-3.5 w-3.5" : "h-7 w-7"
+  const active = hover || value
 
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) => {
-        const filled = star <= (hover || value)
-        return (
-          <button
-            key={star}
-            type="button"
-            disabled={readonly}
-            onClick={() => onChange?.(star)}
-            onMouseEnter={() => !readonly && setHover(star)}
-            onMouseLeave={() => !readonly && setHover(0)}
-            className={`transition-colors ${readonly ? "" : "hover:scale-110"}`}
-          >
-            {filled ? (
+  if (readonly) {
+    return (
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span key={star}>
+            {star <= value ? (
               <HiStar className={`${sizeClass} text-yellow-400`} />
             ) : (
               <HiOutlineStar
-                className={`${sizeClass} text-muted-foreground/40`}
+                className={`${sizeClass} text-muted-foreground/30`}
               />
             )}
-          </button>
-        )
-      })}
+          </span>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div
+        className="flex gap-1 rounded-lg border border-border/30 bg-background/50 px-3 py-2 w-fit dark:bg-background/20"
+        role="group"
+        aria-label="Star rating"
+      >
+        {[1, 2, 3, 4, 5].map((star) => {
+          const filled = star <= active
+          return (
+            <button
+              key={star}
+              type="button"
+              onClick={() => onChange?.(star)}
+              onMouseEnter={() => setHover(star)}
+              onMouseLeave={() => setHover(0)}
+              aria-label={`Rate ${star} out of 5 — ${STAR_LABELS[star - 1]}`}
+              className="rounded transition-transform active:scale-90 hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-code-keyword/50"
+            >
+              {filled ? (
+                <HiStar
+                  className={`${sizeClass} text-yellow-400 drop-shadow-sm`}
+                />
+              ) : (
+                <HiOutlineStar
+                  className={`${sizeClass} text-muted-foreground/40 hover:text-yellow-400/60`}
+                />
+              )}
+            </button>
+          )
+        })}
+      </div>
+      <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+        {active > 0
+          ? `${STAR_LABELS[active - 1]} (${active}/5)`
+          : "Select a rating"}
+      </span>
     </div>
   )
 }
@@ -176,7 +210,7 @@ type FormStatus = "idle" | "submitting" | "success" | "error"
 /* ────────────────── Main Section ────────────────── */
 export function FeedbackSection({ feedbacks }: { feedbacks: Feedback[] }) {
   const [name, setName] = useState("")
-  const [stars, setStars] = useState(5)
+  const [stars, setStars] = useState(0)
   const [comment, setComment] = useState("")
   const [status, setStatus] = useState<FormStatus>("idle")
   const [errorMsg, setErrorMsg] = useState("")
@@ -189,6 +223,12 @@ export function FeedbackSection({ feedbacks }: { feedbacks: Feedback[] }) {
       if (!comment.trim()) {
         setStatus("error")
         setErrorMsg("Please write a comment.")
+        return
+      }
+
+      if (stars < 1) {
+        setStatus("error")
+        setErrorMsg("Please select a star rating.")
         return
       }
 
@@ -213,7 +253,7 @@ export function FeedbackSection({ feedbacks }: { feedbacks: Feedback[] }) {
 
         setStatus("success")
         setName("")
-        setStars(5)
+        setStars(0)
         setComment("")
 
         setTimeout(() => setStatus("idle"), 4000)
@@ -268,13 +308,10 @@ export function FeedbackSection({ feedbacks }: { feedbacks: Feedback[] }) {
               onChange={setName}
             />
 
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground">Rating:</span>
-              <StarRating
-                value={stars}
-                onChange={setStars}
-              />
-            </div>
+            <StarRating
+              value={stars}
+              onChange={setStars}
+            />
 
             <Field
               id="feedback-comment"

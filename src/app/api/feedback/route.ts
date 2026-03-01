@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const starsNum = Number(stars)
     if (!Number.isInteger(starsNum) || starsNum < 1 || starsNum > 5) {
       return NextResponse.json(
-        { error: "Stars must be between 1 and 5." },
+        { error: "Please select a rating between 1 and 5 stars." },
         { status: 400 },
       )
     }

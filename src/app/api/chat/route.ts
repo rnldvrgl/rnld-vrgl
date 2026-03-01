@@ -53,10 +53,21 @@ export async function POST(req: NextRequest) {
     })
 
     if (!res.ok) {
-      console.error("AI API error:", res.status, await res.text())
+      let errorBody = ""
+      try {
+        errorBody = await res.text()
+      } catch {
+        // ignore
+      }
+      console.error("AI API error:", res.status, errorBody)
+
+      // Surface useful info so the client can display a helpful message
+      const isAuthError = res.status === 401 || res.status === 403
       return NextResponse.json({
-        message:
-          "I'm having trouble connecting right now. Please try again in a moment!",
+        message: isAuthError
+          ? "AI is not configured correctly — invalid or missing API key. Check the AI_API_KEY environment variable."
+          : `AI service returned an error (${res.status}). Please try again in a moment.`,
+        debug: process.env.NODE_ENV === "development" ? errorBody : undefined,
       })
     }
 
