@@ -19,12 +19,12 @@ export async function POST(req: NextRequest) {
     // Limit message history to prevent abuse
     const trimmedMessages = messages.slice(-10)
 
-    const apiKey = process.env.NEXT_PUBLIC_AI_API_KEY
+    const apiKey = process.env.AI_API_KEY
     const apiUrl =
-      process.env.NEXT_PUBLIC_AI_API_URL ||
+      process.env.AI_API_URL ||
       "https://openrouter.ai/api/v1/chat/completions"
     const model =
-      process.env.NEXT_PUBLIC_AI_MODEL || "mistralai/mistral-7b-instruct:free"
+      process.env.AI_MODEL || "mistralai/mistral-7b-instruct:free"
 
     if (!apiKey) {
       // Fallback: return a helpful static response when no API key is configured
